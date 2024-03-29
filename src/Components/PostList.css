@@ -1,0 +1,26 @@
+#form{
+    display: flex;
+    flex-direction: column;
+}
+
+textarea {
+    resize: none;
+  }
+
+  .indPost{
+    border: 2px solid red;
+    margin: 5px;
+    padding-left: 25px;
+    min-height: 200px;
+    
+  }
+  #posts{
+ 
+    /* border: 2px solid red; */
+    width: 80%;
+    height: 80%;
+      overflow:scroll;
+      overflow-x:hidden;
+    background-color:azure;
+  }
+  
