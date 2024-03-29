@@ -1,11 +1,10 @@
 
 import './App.css';
-import { useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import PostList from './Components/PostList';
-import { BrowserRouter, Route, Routes} from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import AddPost from './Components/AddPost';
 import EditPost from './Components/EditPost';
-import Demo from './Demo';
 import Loading from './Components/Loading';
 
 // const Postlist = [
@@ -43,26 +42,20 @@ import Loading from './Components/Loading';
 // ];
 function App() {
 
-
-  // const [newList, setList] = useState(Postlist);
   const [filterText, setFilterText] = useState("All");
   const [fetchedPost, setfetchedPost] = useState([]);
   const [loading, setLoading] = useState(false);
-  // const [editMode , setEditMode] = useState(false);
   let [user, setUser] = useState(null);
-  
-
 
   useEffect(() => {
     fetchUsers();
   }, [])
 
   const filterProductList = fetchedPost.filter((post) => {
-    // if(fetchedPost.length===0) return;
+
     const postDate = new Date(post.date);
 
     if (filterText === 'past') {
-
       return postDate < new Date("01/01/2022");
     }
     else if (filterText === 'future') {
@@ -71,7 +64,6 @@ function App() {
     else if (filterText === 'current') {
       return new Date(post.date) <= new Date("12/31/2022") & new Date(post.date) >= new Date("01/01/2022");
     }
-
     else return post;
   })
 
@@ -82,14 +74,14 @@ function App() {
   const strin = `${month}/${date}/${year}`;
 
   const createPost = (ntitle, ndata) => {
-    // setList([ ...newList,{date:strin, id:newList.length+1 , title:ntitle , data:ndata}]);
-  
+
     const newPost = {
       title: ntitle,
       data: ndata,
       date: strin,
     }
-    fetch('https://post-fb1cd-default-rtdb.firebaseio.com//post.json', {
+
+    fetch("https://post-fb1cd-default-rtdb.firebaseio.com/post.json", {
       method: 'POST',
       body: JSON.stringify(newPost),
       headers: {
@@ -101,34 +93,32 @@ function App() {
       })
   }
 
-  const editPost=(eTitle, eData)=>{
+  const editPost = (eTitle, eData) => {
     const editedPost = {
-      title:eTitle,
+      title: eTitle,
       data: eData,
       date: strin,
     }
-      console.log(user.id, "hii");
-      // const uid = user.id;
 
-      fetch(`https://post-fb1cd-default-rtdb.firebaseio.com/post/${user.id}.json`, {
-        method: 'PUT',
-        body: JSON.stringify(editedPost),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-        .then((response) => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+    fetch(`https://post-fb1cd-default-rtdb.firebaseio.com/post/${user.id}.json`, {
+      method: 'PUT',
+      body: JSON.stringify(editedPost),
+      headers: {
+        'Content-Type': 'application/json'
       }
-      return response.json();
     })
-    .then((data) => {
-      fetchUsers();
-    })
-    .catch((error) => {
-      console.error('There was a problem with the fetch operation:', error);
-    });
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        fetchUsers();
+      })
+      .catch((error) => {
+        console.error('There was a problem with the fetch operation:', error);
+      });
 
   }
   function fetchUsers() {
@@ -136,7 +126,7 @@ function App() {
     setLoading(true);
 
 
-    fetch('https://post-fb1cd-default-rtdb.firebaseio.com//post.json', {
+    fetch("https://post-fb1cd-default-rtdb.firebaseio.com/post.json", {
       method: 'GET',
 
     })
@@ -159,59 +149,57 @@ function App() {
         setLoading(false);
       })
   }
- let OnFilter = (filter) => {
+  let OnFilter = (filter) => {
     setFilterText(filter);
   }
 
- let postEdited =function(user){
-    // console.log(user);
+  let postEdited = function (user) {
     setUser(user);
   };
 
- let postDeleted = (user)=>{
-  let del = window.confirm("you really want to delete this post??");
-  if(del){
-    fetch(`https://post-fb1cd-default-rtdb.firebaseio.com/post/${user.id}.json`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((response) => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+  let postDeleted = (user) => {
+
+    let del = window.confirm("you really want to delete this post??");
+
+    if (del) {
+      fetch(`https://post-fb1cd-default-rtdb.firebaseio.com/post/${user.id}.json`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          fetchUsers();
+        })
+        .catch((error) => {
+          console.error('There was a problem with the fetch operation:', error);
+        });
     }
-    return response.json();
-  })
-  .then((data) => {
-    fetchUsers();
-  })
-  .catch((error) => {
-    console.error('There was a problem with the fetch operation:', error);
-  });
+
   }
-     
- }
   return (
 
     <div className="App">
 
-
       <h1>MY POSTS</h1>
 
-
       <BrowserRouter>
-      
+
         <Routes>
-          <Route exact path='/AddPost'  element={<AddPost createPost={createPost}  />} />
-          <Route exact path='/PostList' element={<PostList newList={filterProductList} onFilter={OnFilter} postEdited={postEdited} postDeleted={postDeleted}/>} />
-          <Route exact path='/EditPost' element={ <EditPost user={user} editPost={editPost} />}/> 
-          {!loading && <Route exact path='/' element={<PostList newList={filterProductList} onFilter={OnFilter} postEdited={postEdited} postDeleted={postDeleted}/>} />}
+          <Route exact path='/AddPost' element={<AddPost createPost={createPost} />} />
+          <Route exact path='/PostList' element={<PostList newList={filterProductList} onFilter={OnFilter} postEdited={postEdited} postDeleted={postDeleted} />} />
+          <Route exact path='/EditPost' element={<EditPost user={user} editPost={editPost} />} />
+          {!loading && <Route exact path='/' element={<PostList newList={filterProductList} onFilter={OnFilter} postEdited={postEdited} postDeleted={postDeleted} />} />}
           {loading && <Route exact path='/' element={<Loading />} />}
-          <Route exact path='/Demo' element={<Demo />} />
         </Routes>
 
-      </BrowserRouter>
+  </BrowserRouter>
 
     </div>
 
